@@ -281,4 +281,53 @@ When you're done, your repository should contain:
 
 ---
 
+## 🤖 **Running the ML Scripts**
+
+### Quick Start Training
+
+```bash
+# 1. Train a model (downloads dataset automatically)
+python -m src.modelling.main abalone.csv
+
+# 2. Train with different model type
+python -m src.modelling.main abalone.csv --model_type random_forest
+
+# 3. View experiment results
+mlflow ui  # Open http://localhost:5000
+```
+
+### Making Predictions
+
+After training, predict abalone age from measurements:
+
+```bash
+# Basic prediction
+python -m src.modelling.predict --sex M --length 0.455 --diameter 0.365 --height 0.095 --whole_weight 0.514 --shucked_weight 0.2245 --viscera_weight 0.101 --shell_weight 0.15
+
+# Get ring count instead of age
+python -m src.modelling.predict --sex F --length 0.350 --diameter 0.265 --height 0.090 --whole_weight 0.2255 --shucked_weight 0.0995 --viscera_weight 0.0485 --shell_weight 0.070 --output rings
+
+# Use JSON input
+python -m src.modelling.predict --json '{"Sex": "M", "Length": 0.455, "Diameter": 0.365, "Height": 0.095, "Whole weight": 0.514, "Shucked weight": 0.2245, "Viscera weight": 0.101, "Shell weight": 0.15}'
+```
+
+**Options:**
+- `--model_type`: Use `linear_regression` or `random_forest`
+- `--output`: Get `age` (years) or `rings` count
+
+### Scripts Overview
+
+- **`main.py`**: Train models and save them for predictions
+- **`predict.py`**: Make predictions using trained models
+- **`preprocessing.py`**: Data cleaning and feature engineering
+- **`training.py`**: Model training with MLflow tracking
+- **`predicting.py`**: Core prediction functions
+- **`utils.py`**: Helper functions for data and model handling
+
+### Workflow
+1. **Train**: `python -m src.modelling.main abalone.csv` → Downloads data, trains model, saves artifacts
+2. **Predict**: `python -m src.modelling.predict --sex M --length 0.455 ...` → Loads model, makes predictions
+
+---
+
 **Ready to start? Head to branch_0 and read PR_0.md for your first task! 🚀**

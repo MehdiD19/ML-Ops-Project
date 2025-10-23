@@ -22,16 +22,10 @@ dependencies = [
     "scikit-learn==1.5.2",
     "seaborn==0.12.2",
     "matplotlib>=3.10.6",
-
-    # ML Ops Tools
-    "mlflow==2.7.1",
-    "prefect==2.13.7",
-
     # API & Validation
     "fastapi==0.103.2",
     "uvicorn==0.23.2",
     "pydantic>=1,<2",
-
     # Utilities
     "loguru==0.7.2",
     "joblib==1.3.2",
@@ -39,6 +33,8 @@ dependencies = [
     "setuptools==80.9.0",
     "griffe<1.0.0",
     "ipykernel==6.25.2",
+    "mlflow>=3.5.1",
+    "prefect>=2.19.8",
 ]
 
 [tool.setuptools]
