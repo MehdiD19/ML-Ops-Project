@@ -85,3 +85,11 @@ secrets/*
 
 # Mac files
 .DS_Store
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Data files
+*.csv
+*.parquet
