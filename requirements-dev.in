@@ -1,0 +1,6 @@
+-r requirementstoadd.in
+pre-commit==4.2.0
+ruff==0.12.11
+pytest==8.4.2
+nbstripout==0.8.1
+pip-tools==7.5.0
