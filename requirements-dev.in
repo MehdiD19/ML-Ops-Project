@@ -1,2 +1,6 @@
-# TODO - complete with dev requirements (black, flake8, ruff, etc...)
-# Then, execute "pip-compile requirements-dev.in" to generate the file requirements-dev.txt
+-r requirementstoadd.in
+pre-commit==4.2.0
+ruff==0.12.11
+pytest==8.4.2
+nbstripout==0.8.1
+pip-tools==7.5.0

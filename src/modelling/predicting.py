@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Union, List, Tuple, Any
-
-from .utils import load_pickle_object
+from prefect import task, flow
+from utils import load_pickle_object
 
 
 def load_model_and_scaler(model_path: Path, scaler_path: Path) -> Tuple[Any, Any]:
@@ -13,6 +13,7 @@ def load_model_and_scaler(model_path: Path, scaler_path: Path) -> Tuple[Any, Any
     return model, scaler
 
 
+@task(name="Preprocessing.")
 def preprocess_for_prediction(data: Union[pd.DataFrame, dict], scaler: Any) -> pd.DataFrame:
     """Preprocess new data for prediction using the same transformations as training."""
     if isinstance(data, dict):
@@ -55,6 +56,7 @@ def preprocess_for_prediction(data: Union[pd.DataFrame, dict], scaler: Any) -> p
     return df
 
 
+@task(name="Predicting age.")
 def predict_age(
     data: Union[pd.DataFrame, dict],
     model_path: str = "src/web_service/local_objects/linear_regression_model.pkl",
@@ -89,6 +91,7 @@ def predict_age(
         return y_pred.tolist()
 
 
+@flow(name="Making prediction.")
 def predict_rings(
     data: Union[pd.DataFrame, dict],
     model_path: str = "src/web_service/local_objects/linear_regression_model.pkl",

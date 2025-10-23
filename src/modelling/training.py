@@ -7,11 +7,12 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from typing import Any, Tuple
 import pandas as pd
+from prefect import task, flow
+from preprocessing import preprocess_data
+from utils import pickle_object
 
-from .preprocessing import preprocess_data
-from .utils import pickle_object
 
-
+@task(name="Training linear model.")
 def train_linear_regression(X_train: pd.DataFrame, y_train: pd.Series) -> LinearRegression:
     """Train a Linear Regression model."""
     model = LinearRegression()
@@ -19,6 +20,7 @@ def train_linear_regression(X_train: pd.DataFrame, y_train: pd.Series) -> Linear
     return model
 
 
+@task(name="Training random forest.")
 def train_random_forest(X_train: pd.DataFrame, y_train: pd.Series) -> RandomForestRegressor:
     """Train a Random Forest model with regularization."""
     model = RandomForestRegressor(n_estimators=100, random_state=42, n_jobs=-1, max_depth=10, min_samples_leaf=5)
@@ -26,6 +28,7 @@ def train_random_forest(X_train: pd.DataFrame, y_train: pd.Series) -> RandomFore
     return model
 
 
+@task(name="Evaluating model.")
 def evaluate_model(
     model: Any, X_train: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.Series, y_test: pd.Series
 ) -> Tuple[dict, Any]:
@@ -46,6 +49,7 @@ def evaluate_model(
     return metrics, y_test_pred
 
 
+@flow(name="Training workflow (preprocessing, training and evaluation.)")
 def train_model(data_path: str, model_type: str = "linear_regression") -> None:
     """Complete training pipeline with MLflow tracking."""
     # Set up MLflow experiment

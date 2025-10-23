@@ -331,3 +331,33 @@ python -m src.modelling.predict --json '{"Sex": "M", "Length": 0.455, "Diameter"
 ---
 
 **Ready to start? Head to branch_0 and read PR_0.md for your first task! 🚀**
+
+# Run prefect
+
+## Prerequisites
+
+- Check you have SQLite installed ([Prefect backend database system](https://docs.prefect.io/2.13.7/getting-started/installation/#external-requirements)):
+```
+sqlite3 --version
+```
+
+## UI setup
+
+- Set an API URL for your local server to make sure that your workflow will be tracked by this specific instance :
+```
+uv run prefect config set PREFECT_API_URL=http://0.0.0.0:4200/api
+```
+- Start a local prefect server :
+```
+uv run prefect server start --host 0.0.0.0
+```
+- (Optional) If you want to reset the database, run :
+```
+uv run prefect server database reset
+```
+- Run the following command in your terminal: 
+```
+uv run python main.py
+```
+
+**Now, you can visit the UI at http://0.0.0.0:4200/dashboard**

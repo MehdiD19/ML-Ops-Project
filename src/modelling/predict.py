@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from typing import Dict, Any
 
-from .predicting import predict_age, predict_rings
+from predicting import predict_age, predict_rings
 
 
 def create_sample_dict(
