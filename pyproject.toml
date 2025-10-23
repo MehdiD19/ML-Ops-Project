@@ -37,6 +37,9 @@ dependencies = [
     "prefect>=2.19.8",
 ]
 
+[tool.setuptools]
+packages = []
+
 [tool.uv]
 default-groups = ["dev"]
 

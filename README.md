@@ -281,4 +281,35 @@ When you're done, your repository should contain:
 
 ---
 
+## 🤖 **Running the ML Scripts**
+
+### Quick Start Training & Prediction
+
+```bash
+# 1. Train a model (downloads dataset automatically)
+python -m src.modelling.main abalone.csv
+
+# 2. Train with different model type
+python -m src.modelling.main abalone.csv --model_type random_forest
+
+# 3. View experiment results
+mlflow ui  # Open http://localhost:5000
+```
+
+### What Each Script Does
+
+- **`main.py`**: Entry point that orchestrates the complete training pipeline
+- **`preprocessing.py`**: Data loading, feature engineering, and train/test splitting
+- **`training.py`**: Model training with MLflow tracking, saves pickle files for deployment
+- **`predicting.py`**: Load trained models and make predictions on new data
+- **`utils.py`**: Helper functions for pickle serialization and data download
+
+### Script Workflow
+1. **Data**: Downloads abalone dataset if not found
+2. **Preprocessing**: Feature engineering (ratios, log transforms, scaling)
+3. **Training**: Fits model, logs metrics to MLflow, saves pickle files
+4. **Deployment Ready**: Model and scaler saved for web service predictions
+
+---
+
 **Ready to start? Head to branch_0 and read PR_0.md for your first task! 🚀**
