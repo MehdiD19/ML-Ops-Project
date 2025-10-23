@@ -282,3 +282,99 @@ When you're done, your repository should contain:
 ---
 
 **Ready to start? Head to branch_0 and read PR_0.md for your first task! 🚀**
+
+---
+
+## 🌐 API Deployment
+
+### Running the API Locally
+
+1. **Ensure your model is trained and saved**:
+   ```bash
+   # Your model files should be in src/web_service/local_objects/
+   # - model.pkl (trained model)
+   # - encoder.pkl (optional, for categorical encoding)
+   ```
+
+2. **Start the API server**:
+   ```bash
+   # Activate your virtual environment
+   source .venv/bin/activate  # macOS/Linux
+   # OR on Windows: .venv\Scripts\activate
+
+   # Start the FastAPI server
+   uvicorn src.web_service.main:app --host 0.0.0.0 --port 8001 --reload
+   ```
+
+3. **Access the API**:
+   - **API Documentation**: http://localhost:8001/docs
+   - **Health Check**: http://localhost:8001/
+   - **Model Info**: http://localhost:8001/model/info
+
+### Running with Docker
+
+1. **Build the Docker image**:
+   ```bash
+   docker build -f Dockerfile.app -t abalone-api .
+   ```
+
+2. **Run the container**:
+   ```bash
+   docker run -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-api
+   ```
+
+3. **Access the containerized API**:
+   - **API Documentation**: http://localhost:8000/docs
+   - **Health Check**: http://localhost:8000/
+   - **Prefect UI**: http://localhost:4200/
+
+### API Endpoints
+
+#### Health Check
+```bash
+curl -X GET "http://localhost:8001/"
+```
+
+#### Single Prediction
+```bash
+curl -X POST "http://localhost:8001/predict" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "sex": "M",
+       "length": 0.455,
+       "diameter": 0.365,
+       "height": 0.095,
+       "whole_weight": 0.514,
+       "shucked_weight": 0.2245,
+       "viscera_weight": 0.101,
+       "shell_weight": 0.15
+     }'
+```
+
+#### Batch Prediction
+```bash
+curl -X POST "http://localhost:8001/predict/batch" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "instances": [
+         {
+           "sex": "M",
+           "length": 0.455,
+           "diameter": 0.365,
+           "height": 0.095,
+           "whole_weight": 0.514,
+           "shucked_weight": 0.2245,
+           "viscera_weight": 0.101,
+           "shell_weight": 0.15
+         }
+       ]
+     }'
+```
+
+### Testing the API
+
+Run the provided test script to verify all endpoints:
+
+```bash
+python test_api.py
+```
