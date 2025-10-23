@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from typing import Tuple
+from prefect import task
 
 
 def load_data(data_path: str) -> pd.DataFrame:
@@ -74,6 +75,7 @@ def prepare_train_test_split(
     return X_train, X_test, y_train, y_test
 
 
+@task(name="Preprocessing")
 def preprocess_data(data_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, StandardScaler]:
     """Complete preprocessing pipeline."""
     # Load data
