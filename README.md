@@ -363,13 +363,11 @@ uv run python main.py
 **Now, you can visit the UI at http://0.0.0.0:4200/dashboard**
 
 
----
 
 ## 🌐 Running the Prediction API
 
 ### Local (FastAPI with Uvicorn)
 
-```bash
 # Set project root as PYTHONPATH
 export PYTHONPATH=.
 
