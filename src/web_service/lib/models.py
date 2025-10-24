@@ -18,7 +18,6 @@ class AbaloneFeatures(BaseModel):
 
     class Config:
         """Pydantic configuration for AbaloneFeatures."""
-
         schema_extra = {
             "example": {
                 "sex": "M",
@@ -42,26 +41,22 @@ class PredictionResponse(BaseModel):
 
     class Config:
         """Pydantic configuration for PredictionResponse."""
-
         schema_extra = {"example": {"predicted_age": 9.5, "confidence": 0.85, "model_version": "v1.0.0"}}
 
 
 class BatchPredictionRequest(BaseModel):
     """Request model for batch predictions."""
-
     instances: List[AbaloneFeatures] = Field(..., description="List of abalone instances to predict")
 
 
 class BatchPredictionResponse(BaseModel):
     """Response model for batch predictions."""
-
     predictions: List[PredictionResponse] = Field(..., description="List of predictions")
     total_predictions: int = Field(..., description="Total number of predictions made")
 
 
 class HealthResponse(BaseModel):
     """Health check response model."""
-
     status: str = Field(..., description="Service status")
     message: str = Field(..., description="Health check message")
     model_loaded: bool = Field(..., description="Whether the ML model is loaded")

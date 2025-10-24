@@ -74,7 +74,7 @@ class ModelPredictor:
         # Apply scaler to numeric columns if available
         if self.scaler is not None:
             try:
-                # Prefer scaler's feature_names_in_ if present (e.g., from scikit-learn >=1.0)
+                # Prefer scaler's feature_names_in_ if present
                 if hasattr(self.scaler, "feature_names_in_"):
                     cols_to_scale = [c for c in self.scaler.feature_names_in_ if c in df.columns]
                     if cols_to_scale:
@@ -95,13 +95,10 @@ class ModelPredictor:
             raise ValueError("Model is not loaded. Please check model files.")
 
         try:
-            # Preprocess features
             processed_features = self.preprocess_features(features)
-
-            # Make prediction
             prediction = self.model.predict(processed_features)[0]
 
-            # Linear regression typically has no predict_proba; keep interface for compatibility
+            # Linear regression: no predict_proba
             confidence = None
 
             return PredictionResponse(

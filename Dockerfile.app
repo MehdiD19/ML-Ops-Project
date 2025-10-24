@@ -1,42 +1,41 @@
-# Make sure to check bin/run_services.sh, which can be used here
-
-# Do not forget to expose the right ports! (Check the PR_4.md)
 # Dockerfile for Abalone Age Prediction API
 FROM python:3.11-slim
+
+# Prevent .pyc and enable unbuffered logs
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Ensure uv-created venv binaries are on PATH
+ENV VIRTUAL_ENV=/app/.venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
+# System deps (needed for compiling some wheels)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc g++ \
+ && rm -rf /var/lib/apt/lists/*
 
-# Install uv for dependency management
-RUN pip install uv
+# Install uv (dependency manager)
+RUN pip install --no-cache-dir uv
 
-# Copy dependency files
+# Copy dependency files and install exactly what's locked
 COPY pyproject.toml uv.lock ./
-
-# Install dependencies
 RUN uv sync --frozen
 
 # Copy application code
 COPY src/ ./src/
 COPY bin/ ./bin/
 
-# Make the run script executable and verify it exists
-RUN chmod +x ./bin/run_services.sh && \
-    ls -la ./bin/ && \
-    cat ./bin/run_services.sh
+# Make the run script executable
+RUN chmod +x ./bin/run_services.sh
 
-# Create directory for model files
+# Create directory for model artifacts (present also at runtime)
 RUN mkdir -p ./src/web_service/local_objects
 
-# Expose ports as specified in PR_4.md
-# Port 8001 for FastAPI, Port 4201 for Prefect
+# Expose ports (8001 FastAPI API, 4201 Prefect)
 EXPOSE 8001 4201
 
-# Use the run script to start services
-CMD ["/bin/bash", "-c", "ls -la ./bin/ && ./bin/run_services.sh"]
+# Start services
+CMD ["bash", "-c", "./bin/run_services.sh"]
