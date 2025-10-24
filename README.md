@@ -281,4 +281,119 @@ When you're done, your repository should contain:
 
 ---
 
+## 🤖 **Running the ML Scripts**
+
+### Quick Start Training
+
+```bash
+# 1. Train a model (downloads dataset automatically)
+python -m src.modelling.main abalone.csv
+
+# 2. Train with different model type
+python -m src.modelling.main abalone.csv --model_type random_forest
+
+# 3. View experiment results
+mlflow ui  # Open http://localhost:5000
+```
+
+### Making Predictions
+
+After training, predict abalone age from measurements:
+
+```bash
+# Basic prediction
+python -m src.modelling.predict --sex M --length 0.455 --diameter 0.365 --height 0.095 --whole_weight 0.514 --shucked_weight 0.2245 --viscera_weight 0.101 --shell_weight 0.15
+
+# Get ring count instead of age
+python -m src.modelling.predict --sex F --length 0.350 --diameter 0.265 --height 0.090 --whole_weight 0.2255 --shucked_weight 0.0995 --viscera_weight 0.0485 --shell_weight 0.070 --output rings
+
+# Use JSON input
+python -m src.modelling.predict --json '{"Sex": "M", "Length": 0.455, "Diameter": 0.365, "Height": 0.095, "Whole weight": 0.514, "Shucked weight": 0.2245, "Viscera weight": 0.101, "Shell weight": 0.15}'
+```
+
+**Options:**
+- `--model_type`: Use `linear_regression` or `random_forest`
+- `--output`: Get `age` (years) or `rings` count
+
+### Scripts Overview
+
+- **`main.py`**: Train models and save them for predictions
+- **`predict.py`**: Make predictions using trained models
+- **`preprocessing.py`**: Data cleaning and feature engineering
+- **`training.py`**: Model training with MLflow tracking
+- **`predicting.py`**: Core prediction functions
+- **`utils.py`**: Helper functions for data and model handling
+
+### Workflow
+1. **Train**: `python -m src.modelling.main abalone.csv` → Downloads data, trains model, saves artifacts
+2. **Predict**: `python -m src.modelling.predict --sex M --length 0.455 ...` → Loads model, makes predictions
+
+---
+
 **Ready to start? Head to branch_0 and read PR_0.md for your first task! 🚀**
+
+# Run prefect
+
+## Prerequisites
+
+- Check you have SQLite installed ([Prefect backend database system](https://docs.prefect.io/2.13.7/getting-started/installation/#external-requirements)):
+```
+sqlite3 --version
+```
+
+## UI setup
+
+- Set an API URL for your local server to make sure that your workflow will be tracked by this specific instance :
+```
+uv run prefect config set PREFECT_API_URL=http://0.0.0.0:4200/api
+```
+- Start a local prefect server :
+```
+uv run prefect server start --host 0.0.0.0
+```
+- (Optional) If you want to reset the database, run :
+```
+uv run prefect server database reset
+```
+- Run the following command in your terminal: 
+```
+uv run python main.py
+```
+
+**Now, you can visit the UI at http://0.0.0.0:4200/dashboard**
+
+
+
+## 🌐 Running the Prediction API
+
+### Local (FastAPI with Uvicorn)
+
+# Set project root as PYTHONPATH
+export PYTHONPATH=.
+
+# Start the FastAPI server
+uv run uvicorn src.web_service.main:app --host 0.0.0.0 --port 8001 --reload
+
+
+# Check Health
+curl -s http://127.0.0.1:8001/health
+
+# Make a prediction
+curl -s -X POST http://127.0.0.1:8001/predict \
+  -H "Content-Type: application/json" \
+  -d '{"sex":"M","length":0.455,"diameter":0.365,"height":0.095,"whole_weight":0.514,"shucked_weight":0.2245,"viscera_weight":0.101,"shell_weight":0.15}'
+
+# Docker
+# Build the Docker image
+docker build -f Dockerfile.app -t abalone-api:dev .
+
+# Run the container with required port bindings
+docker run --rm -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-api:dev
+
+# Health check (Docker)
+curl -s http://127.0.0.1:8000/health
+
+# Make a prediction (Docker)
+curl -s -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"sex":"M","length":0.455,"diameter":0.365,"height":0.095,"whole_weight":0.514,"shucked_weight":0.2245,"viscera_weight":0.101,"shell_weight":0.15}'
