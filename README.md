@@ -361,3 +361,39 @@ uv run python main.py
 ```
 
 **Now, you can visit the UI at http://0.0.0.0:4200/dashboard**
+
+
+
+## 🌐 Running the Prediction API
+
+### Local (FastAPI with Uvicorn)
+
+# Set project root as PYTHONPATH
+export PYTHONPATH=.
+
+# Start the FastAPI server
+uv run uvicorn src.web_service.main:app --host 0.0.0.0 --port 8001 --reload
+
+
+# Check Health
+curl -s http://127.0.0.1:8001/health
+
+# Make a prediction
+curl -s -X POST http://127.0.0.1:8001/predict \
+  -H "Content-Type: application/json" \
+  -d '{"sex":"M","length":0.455,"diameter":0.365,"height":0.095,"whole_weight":0.514,"shucked_weight":0.2245,"viscera_weight":0.101,"shell_weight":0.15}'
+
+# Docker
+# Build the Docker image
+docker build -f Dockerfile.app -t abalone-api:dev .
+
+# Run the container with required port bindings
+docker run --rm -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-api:dev
+
+# Health check (Docker)
+curl -s http://127.0.0.1:8000/health
+
+# Make a prediction (Docker)
+curl -s -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"sex":"M","length":0.455,"diameter":0.365,"height":0.095,"whole_weight":0.514,"shucked_weight":0.2245,"viscera_weight":0.101,"shell_weight":0.15}'
